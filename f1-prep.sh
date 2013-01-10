@@ -6,7 +6,8 @@
 # Prepare a test partition for linux source snapshot testing.
 #
 
-BASEDIR="${0%/*}"
+#BASEDIR="${0%/*}"
+BASEDIR=`pwd`
 
 source "${BASEDIR}/common-include.sh"
 
@@ -19,7 +20,7 @@ echo "TIMESLOT is ${TIMESLOT}"
 if (cat /proc/mounts | grep "${BNCHMNT}"); then
 	echo "${BNCHMNT} mountpoint is mounted..."
 
-	if [[ -e "${BNCHMNT}/${BASE_LINUX_SOURCES_SUBVOL}/MAINTAINERS" ]]; then
+	if [[ -e "${BASE_LINUX_SOURCES_SUBVOL}/MAINTAINERS" ]]; then
 		echo "The sources seem to already be present!"
 		echo "Exiting..."
 		exit 1
@@ -30,7 +31,7 @@ else
 	# Reformat the testing partition.
 	${BASEDIR}/reformat-testing-partition.sh
 
-	echoit mount -o compress-force=lzo ${TARGET} ${BNCNMNT}
+	echoit mount -o autodefrag,compress-force=lzo ${TARGET} ${BNCHMNT}
 fi
 
 if [[ ! -e ${GITSRCARCHIVE} ]]; then
@@ -52,7 +53,7 @@ ${BTRFSBIN} subvolume create ./bsubvol
 
 # Extract the sources to the root directory on the testing partition.
 echo "Dearchiving git source dirs to ${BNCHMNT}..."
-${TIMEBIN} tar -xpf ${GITSRCARCHIVE}
+${TIMEBIN} tar -xpf ${GITSRCARCHIVE} -C "${BASE_LINUX_SOURCES_SUBVOL}"
 sync
 
 # All the branches that will be used for pulls need to be checked out
@@ -61,6 +62,6 @@ cd "${BASE_LINUX_SOURCES_SUBVOL}"
 git checkout linux-2.6.37.y 
 
 # Display some general status information 
-df -T
+df -T ${BNCHMNT}
 
-${BTRFSBIN} fi df $(BNCHMNT}
+${BTRFSBIN} filesystem df ${BNCHMNT}

@@ -29,7 +29,7 @@ else
 fi
 
 # Test for things being where we expect.
-if [[ ! -e "${BNCHMNT}/${BASE_LINUX_SOURCES_SUBVOL}/MAINTAINERS" ]]; then
+if [[ ! -e "${BASE_LINUX_SOURCES_SUBVOL}/MAINTAINERS" ]]; then
 	echo "The root sources do not seem to be present!"
 	echo "Exiting..."
 	exit 1
@@ -43,11 +43,11 @@ fi
 cd  ${BNCHMNT}
 
 ${BTRFSBIN} subvolume snapshot \
-	"${BNCHMNT}/${BASE_LINUX_SOURCES_SUBVOL}" \
-	"${BNCHMNT}/${BSUBVOL}/linux-btrfs-${TIMESLOT}"
+	"${BASE_LINUX_SOURCES_SUBVOL}" \
+	"${BSUBVOL}/linux-btrfs-${TIMESLOT}"
 
 
 # Display some general status information 
-df -T
+df -T ${BNCHMNT}
 
 ${BTRFSBIN} fi df ${BNCHMNT}

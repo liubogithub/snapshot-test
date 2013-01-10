@@ -23,7 +23,7 @@ else
 fi
 
 # Test for things being where we expect.
-if [[ ! -e "${BNCHMNT}/${BASE_LINUX_SOURCES_SUBVOL}/MAINTAINERS" ]]; then
+if [[ ! -e "${BASE_LINUX_SOURCES_SUBVOL}/MAINTAINERS" ]]; then
 	echo "The root sources do not seem to be present!"
 	echo "Exiting..."
 	exit 1
@@ -37,21 +37,21 @@ done
 
 cd  ${BNCHMNT}
 
-NUM_SNAPSHOTS=$(ls -d ${BNCHMNT}/${BSUBVOL}/linux-btrfs* | wc -l)
-if (ls -d ${BNCHMNT}/${BSUBVOL}/linux-btrfs*); then
+NUM_SNAPSHOTS=$(ls -d ${BSUBVOL}/linux-btrfs* | wc -l)
+if (ls -d ${BSUBVOL}/linux-btrfs*); then
 	echo "${NUM_SNAPSHOTS} previous snapshots found!"
 else
-	echo "No Snapshots found in ${BNCHMNT}/${BSUBVOL}"
+	echo "No Snapshots found in $${BSUBVOL}"
 	echo "Exiting..."
 	exit 1
 fi
 
 # Pick a random snapshot
-SRC_SNAPSHOT=$(ls -d ${BNCHMNT}/${BSUBVOL}/linux-btrfs*|shuf|head -1)
+SRC_SNAPSHOT=$(ls -d ${BSUBVOL}/linux-btrfs*|shuf|head -1)
 echo "Source snapshot: ${SRC_SNAPSHOT}"
 
-${BTRFSBIN} subvolume snapshot "${SRC_SNAPSHOT}" "${BNCHMNT}/${BSUBVOL}/linux-btrfs-${TIMESLOT}"
-cd "${BNCHMNT}/${BSUBVOL}/linux-btrfs-${TIMESLOT}"
+${BTRFSBIN} subvolume snapshot "${SRC_SNAPSHOT}" "${BSUBVOL}/linux-btrfs-${TIMESLOT}"
+cd "${BSUBVOL}/linux-btrfs-${TIMESLOT}"
 
 # If the top manipulation is found, reset...
 if (git branch | grep "btrfs-eater-3"); then
@@ -67,19 +67,19 @@ if (git branch | grep "btrfs-eater-2"); then
 	# Checks out 2.6.36
 	git checkout f6f94e2ab1b33f0082ac2
 	git checkout -b btrfs-eater-3
-	git pull ${BNCHMNT}/${BASE_LINUX_SOURCES_SUBVOL} linux-2.6.37.y >> /dev/null
+	git pull ${BASE_LINUX_SOURCES_SUBVOL} linux-2.6.37.y >> /dev/null
 elif (git branch | grep "btrfs-eater-1"); then
 	echo "Setting Snapshot to btrfs-eater-2"
 	# Checks out 2.6.35
 	git checkout 9fe6206f400646a2322096b56
 	git checkout -b btrfs-eater-2
-	git pull ${BNCHMNT}/${BASE_LINUX_SOURCES_SUBVOL} linux-2.6.37.y >> /dev/null
+	git pull ${BASE_LINUX_SOURCES_SUBVOL} linux-2.6.37.y >> /dev/null
 else
 	# checks out to 2.6.34
 	echo "Setting Snapshot to btrfs-eater-1"
 	git checkout e40152ee1e1c7a63f4777
 	git checkout -b btrfs-eater-1
-	git pull ${BNCHMNT}/${BASE_LINUX_SOURCES_SUBVOL} linux-2.6.37.y >> /dev/null
+	git pull ${BASE_LINUX_SOURCES_SUBVOL} linux-2.6.37.y >> /dev/null
 fi
 
 
@@ -89,7 +89,7 @@ df -T | grep ${BNCHMNT}
 
 ${BTRFSBIN} fi df ${BNCHMNT}
 
-NUM_SNAPSHOTS=$(ls -d ${BNCHMNT}/${BSUBVOL}/linux-btrfs* | wc -l)
+NUM_SNAPSHOTS=$(ls -d ${BSUBVOL}/linux-btrfs* | wc -l)
 
 if [[ -e snapshot-count.orig ]]; then
         TCOUNT=$(cat snapshot-count.orig)

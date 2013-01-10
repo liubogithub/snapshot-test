@@ -7,9 +7,9 @@
 #
 
 BNCHMNT="/mnt/btrfs"
-BSUBVOL="bsubvol"
+BSUBVOL="${BNCHMNT}/bsubvol"
 GITSRCARCHIVE="/mnt/linux-stable.tar.bz2"
-BASE_LINUX_SOURCES_SUBVOL="linux-stable"
+BASE_LINUX_SOURCES_SUBVOL="${BNCHMNT}/linux-stable"
 TIMEBIN="/usr/bin/time"
 BTRFSBIN="/usr/local/bin/btrfs"
 

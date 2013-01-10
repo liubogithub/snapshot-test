@@ -38,22 +38,22 @@ done
 
 cd  ${BNCHMNT}
 
-if (ls -d ${BNCHMNT}/${BSUBVOL}/linux-btrfs*); then
-	echo "$(ls -d ${BNCHMNT}/${BSUBVOL}/linux-btrfs* | wc -l) previous snapshots found!"
+if (ls -d ${BSUBVOL}/linux-btrfs*); then
+	echo "$(ls -d ${BSUBVOL}/linux-btrfs* | wc -l) previous snapshots found!"
 else
-	echo "No Snapshots found in ${BNCHMNT}/${BSUBVOL}"
+	echo "No Snapshots found in ${BSUBVOL}"
 	echo "Exiting..."
 	exit 1
 fi
 
 # Pick a random snapshot
-DEL_SNAPSHOT=$(ls -d ${BNCHMNT}/${BSUBVOL}/linux-btrfs*|shuf|head -1)
+DEL_SNAPSHOT=$(ls -d ${BSUBVOL}/linux-btrfs*|shuf|head -1)
 echo "Snapshot to remove: ${DEL_SNAPSHOT}"
 
 ${BTRFSBIN} subvolume delete "${DEL_SNAPSHOT}"
 
 
 # Display some general status information 
-df -T
+df -T ${BNCHMNT}
 
 ${BTRFSBIN} fi df ${BNCHMNT}
