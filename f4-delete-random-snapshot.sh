@@ -3,7 +3,7 @@
 #
 # f4-delete-random-snapshot.sh
 #
-# Create the first snapshot for linux source snapshot testing.
+# delete a random snapshot snapshot for linux source snapshot testing.
 #
 
 BASEDIR="${0%/*}"
@@ -20,9 +20,7 @@ if (cat /proc/mounts | grep "${BNCHMNT}"); then
 else
 	echo "Mount ${BNCHMNT} not found, attempting to mount..."
 
-	echoit mount -o compress-force=lzo /dev/sda7 /mnt/benchmark
-	# echoit mount -o compress-force=zlib /dev/sda7 /mnt/benchmark
-	# echoit mount /dev/sda7 /mnt/benchmark
+	echoit mount -o compress-force=lzo ${TARGET} ${BNCHMNT}
 fi
 
 # Test for things being where we expect.
@@ -35,7 +33,7 @@ fi
 CMDS="${TIMEBIN} ${BTRFSBIN} wc shuf head"
 for i in $CMDS; do
 	# command -v will return >0 when the $i is not found
-	command -v $i >/dev/null && continue || { echo "$i command not found."; exit 1; }
+	command -v $i >/dev/null || { echo "$i command not found."; exit 1; }
 done
 
 cd  ${BNCHMNT}
@@ -58,4 +56,4 @@ ${BTRFSBIN} subvolume delete "${DEL_SNAPSHOT}"
 # Display some general status information 
 df -T
 
-${BTRFSBIN} fi df /mnt/benchmark/
+${BTRFSBIN} fi df ${BNCHMNT}

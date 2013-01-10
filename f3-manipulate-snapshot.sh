@@ -19,9 +19,7 @@ if (cat /proc/mounts | grep "${BNCHMNT}"); then
 else
 	echo "Mount ${BNCHMNT} not found, attempting to mount..."
 
-	echoit mount -o compress-force=lzo /dev/sda7 /mnt/benchmark
-	# echoit mount -o compress-force=zlib /dev/sda7 /mnt/benchmark
-	# echoit mount /dev/sda7 /mnt/benchmark
+	echoit mount -o compress-force=lzo ${TARGET} ${BNCHMNT}
 fi
 
 # Test for things being where we expect.
@@ -34,7 +32,7 @@ fi
 CMDS="${TIMEBIN} ${BTRFSBIN} wc shuf head git"
 for i in $CMDS; do
 	# command -v will return >0 when the $i is not found
-	command -v $i >/dev/null && continue || { echo "$i command not found."; exit 1; }
+	command -v $i >/dev/null || { echo "$i command not found."; exit 1; }
 done
 
 cd  ${BNCHMNT}
@@ -89,7 +87,7 @@ fi
 echo "Filesystem     Type   1K-blocks     Used Available Use% Mounted on"
 df -T | grep ${BNCHMNT}
 
-${BTRFSBIN} fi df /mnt/benchmark/
+${BTRFSBIN} fi df ${BNCHMNT}
 
 NUM_SNAPSHOTS=$(ls -d ${BNCHMNT}/${BSUBVOL}/linux-btrfs* | wc -l)
 

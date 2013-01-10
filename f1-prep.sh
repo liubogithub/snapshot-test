@@ -30,9 +30,7 @@ else
 	# Reformat the testing partition.
 	${BASEDIR}/reformat-testing-partition.sh
 
-	echoit mount -o compress-force=lzo /dev/sda7 /mnt/benchmark
-	# echoit mount -o compress-force=zlib /dev/sda7 /mnt/benchmark
-	# echoit mount /dev/sda7 /mnt/benchmark
+	echoit mount -o compress-force=lzo ${TARGET} ${BNCNMNT}
 fi
 
 if [[ ! -e ${GITSRCARCHIVE} ]]; then
@@ -40,10 +38,10 @@ if [[ ! -e ${GITSRCARCHIVE} ]]; then
 	exit 1
 fi
 
-CMDS="${TIMEBIN} ${BTRFSBIN} tar /bin/sync"
+CMDS="${TIMEBIN} ${BTRFSBIN} tar sync"
 for i in $CMDS; do
 	# command -v will return >0 when the $i is not found
-	command -v $i >/dev/null && continue || { echo "$i command not found."; exit 1; }
+	command -v $i >/dev/null || { echo "$i command not found."; exit 1; }
 done
 
 cd  ${BNCHMNT}
@@ -55,7 +53,7 @@ ${BTRFSBIN} subvolume create ./bsubvol
 # Extract the sources to the root directory on the testing partition.
 echo "Dearchiving git source dirs to ${BNCHMNT}..."
 ${TIMEBIN} tar -xpf ${GITSRCARCHIVE}
-/bin/sync
+sync
 
 # All the branches that will be used for pulls need to be checked out
 # or they won't be found.
@@ -65,4 +63,4 @@ git checkout linux-2.6.37.y
 # Display some general status information 
 df -T
 
-${BTRFSBIN} fi df /mnt/benchmark/
+${BTRFSBIN} fi df $(BNCHMNT}

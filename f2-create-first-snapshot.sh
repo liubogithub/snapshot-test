@@ -25,9 +25,7 @@ if (cat /proc/mounts | grep "${BNCHMNT}"); then
 else
 	echo "Mount ${BNCHMNT} not found, attempting to mount..."
 
-	echoit mount -o compress-force=lzo /dev/sda7 /mnt/benchmark
-	# echoit mount -o compress-force=zlib /dev/sda7 /mnt/benchmark
-	# echoit mount /dev/sda7 /mnt/benchmark
+	echoit mount -o compress-force=lzo ${TARGET} ${BNCHMNT}
 fi
 
 # Test for things being where we expect.
@@ -52,4 +50,4 @@ ${BTRFSBIN} subvolume snapshot \
 # Display some general status information 
 df -T
 
-${BTRFSBIN} fi df /mnt/benchmark/
+${BTRFSBIN} fi df ${BNCHMNT}
